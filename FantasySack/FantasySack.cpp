@@ -187,7 +187,7 @@ bool get_sol(int* team, int budget) {
     return get_sol(team, GK, DF, MD, FW, 0, budget);
 }
 
-bool verbose = true;
+bool verbose = false;
 int print_sol(int* team, int startgw, int endgw, int& old_price, int& new_price) {
 
     int max = 0;
@@ -237,7 +237,7 @@ int print_sol(int* team, int startgw, int endgw, int& old_price, int& new_price)
 
 bool skipped_week[50];
 int max_reval_weeks = 0;
-int bad_form_weeks = 2;
+int bad_form_weeks = 6;
 void reval_players(int gw) {
     for (int i = 0; i < pcount; i++) {
         Player& p = player[i];
@@ -558,10 +558,13 @@ int DoSeasonLoop(int* team, int budget) {
 int main(int argc, char** argv)
 {
     if (argc < 2) {
-        cout << "No season specified.\n";
+        cout << "Please specify season .\n";
         return 7;
     }
     string season = argv[1];
+    string mode;
+    if (argc > 2)
+        mode = argv[2];
 
     int err = Load(season);
     if (err != 0) {
@@ -592,8 +595,13 @@ int main(int argc, char** argv)
     solve(0, GK, DF, MD, FW, 0, BUDGET);
     get_sol(team, BUDGET);
     
-    highest_points = DoSeasonLoop(team, BUDGET);
+    if (mode == "step") {
+        highest_points = DoSeasonLoop(team, BUDGET);
 
+    }
+    else {
+        Wildcard(0, 0, 3, team, BUDGET);
+    }
     // Optimum TEAM
     init();
     reval_players(1);
