@@ -30,13 +30,13 @@ const int COUNT = 700;
 Player* player = new Player[COUNT];
 
 const int GK = 1;
-const int DF = 5;
+const int DF = 3;
 const int MD = 5;
 const int FW = 3;
 const int MAX_ATTACK = 7;
 const int ALL = 11;
 const int LP = 3;
-const int BUDGET = 1000 - 175;
+const int BUDGET = 1000 - 165;
 short*  cache[COUNT + 1][ GK + 1][ DF + 1][ MD + 1][ FW + 1][LP + 1];
 short* sol[COUNT + 1][GK + 1][DF + 1][MD + 1][FW + 1][LP + 1];
 
@@ -448,6 +448,7 @@ void Wildcard(int i, int points, int start, int* team, int budget) {
 int DoSeasonLoop(int* team, int budget) {
     int points = 0;
     int prevw = 0;
+    int nwc = 2;
    
     for (int w = 2; w <= max_gw; w+=2) {
         if (skipped_week[w]) {
@@ -476,7 +477,7 @@ int DoSeasonLoop(int* team, int budget) {
         cout << "Skipped Players = " << skipped_players << endl;
 
 
-        if (w == 39) {
+        if (skipped_players > 4 && w >= 3 && nwc > 0 || w == 39) {
             cout << "Wildcard at w " << w << "\n";
             squad_target = ALL;
             pre_selected = 0;
@@ -485,6 +486,7 @@ int DoSeasonLoop(int* team, int budget) {
             get_sol(team, budget);
             prevw = w;
             w--;
+            nwc--;
             continue;
         }
         prevw = w;
