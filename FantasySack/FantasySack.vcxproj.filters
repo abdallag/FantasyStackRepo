@@ -27,5 +27,7 @@
     <Text Include="2019-20.txt" />
     <Text Include="2019-20_gw.txt" />
     <Text Include="2020-21.txt" />
+    <Text Include="2016-17_gw.txt" />
+    <Text Include="2016-17.txt" />
   </ItemGroup>
 </Project>
