@@ -9,6 +9,7 @@
 #include <map>
 #include <vector>
 #include <algorithm>
+#include <set>
 #include <cstdio>
 #include <io.h>
 #include <fcntl.h>
@@ -27,7 +28,11 @@ struct Player
     bool skip;
     short gwprice[50];
     short gwpoints[50];
+    short gwxpts[50];
+    bool gwgames[50];
 };
+
+std::set<int> exclude_players; //{ 1, 11, 12 };
 
 const int COUNT = 700;
 Player* player = new Player[COUNT];
@@ -42,6 +47,7 @@ const int LP = 3;
 const int BUDGET = 1000 - 165 - (DF - 3) * 5;
 short*  cache[COUNT + 1][ GK + 1][ DF + 1][ MD + 1][ FW + 1][LP + 1];
 short* sol[COUNT + 1][GK + 1][DF + 1][MD + 1][FW + 1][LP + 1];
+const int LIVERPOOL = 14;
 
 int pcount = 0;
 int max_gw = 0;
@@ -72,11 +78,14 @@ int solve(int i, int gk, int df, int md, int fw, int lp, int budget)
     if (player[i].skip ||
         price == 0 ||
         budget < price ||
-        player[i].pos == 1 && price > 45)
+        //player[i].pos == 1 && price > 45) ||
+        player[i].pos != 1 && gk == 1 && tot - pre_selected == squad_target -1 ||
+        exclude_players.find(i) != exclude_players.end())
         return res;
     
-    if (player[i].team == 14 && lp == LP)
-        return res;
+    if (player[i].team == LIVERPOOL)
+       if( lp == LP)
+         return res;
 
     bool isok = false;
     int gk2 = gk, df2 = df, md2 = md, fw2 = fw;
@@ -108,7 +117,7 @@ int solve(int i, int gk, int df, int md, int fw, int lp, int budget)
     }
     if (isok) {
         int lp2 = lp;
-        if (player[i].team == 14)
+        if (player[i].team == LIVERPOOL)
             lp2++;
         int gain = player[i].effective_points;
         int take = solve(i + 1, gk2, df2, md2, fw2, lp2, budget - price) + gain;
@@ -190,7 +199,7 @@ bool get_sol(int* team, int gk, int df, int md, int fw, int lp, int budget) {
             break;
         }
         budget -= player[i].price;
-        if (player[i].team == 14)
+        if (player[i].team == LIVERPOOL)
             lp++;
     }
     return found;
@@ -201,7 +210,7 @@ bool get_sol(int* team, int budget) {
 }
 
 bool verbose = false;
-int print_sol(int* team, int startgw, int endgw, int& old_price, int& new_price) {
+int print_sol(int* team, int startgw, int endgw, int& old_price, int& new_price, bool use_effective = false, bool captain = true) {
     std::wostream& fout = *pout;
 
     int max = 0;
@@ -228,8 +237,13 @@ int print_sol(int* team, int startgw, int endgw, int& old_price, int& new_price)
         old_price += p.price;
         new_price += p.gwprice[endgw];
         int player_points = 0;
-        for (int j = startgw; j <= endgw; j++) {
-            player_points += p.gwpoints[j];
+        if (use_effective) {
+            player_points = p.effective_points;
+        }
+        else {
+            for (int j = startgw; j <= endgw; j++) {
+                player_points += p.gwpoints[j];
+            }
         }
         points += player_points;
         if (player_points > max) {
@@ -237,13 +251,19 @@ int print_sol(int* team, int startgw, int endgw, int& old_price, int& new_price)
             maxi = i;
         }
     }
-    if(broken) 
+    if (broken)
         fout << "\n**********BROKEN TEAM COUNT*******************\n";
-    
-    points += max;
-  
-    fout << "\nTeam value gw " << startgw -1 << "->" << endgw << " = " << old_price  << "->" << new_price << endl;
-    fout << "Captain=" << player[team[maxi]].name << " pionts percentage = " << (100.0 * max) / points << " %\n";
+
+    if (captain)
+        points += max;
+
+    fout << "\nTeam value gw " << startgw - 1 << "->" << endgw << " = " << old_price << "->" << new_price << endl;
+    if (captain) {
+        fout << "Captain=" << player[team[maxi]].name;
+        if (points != 0) {
+            fout << " points percentage = " << (100.0 * max) / points << " %\n";
+        }
+    }
     fout << "Points for weeks [" << startgw << "," << endgw << "] = " << points << endl;
 
     return points;
@@ -262,17 +282,25 @@ void reval_players(int gw) {
         if (max_reval_weeks)
             eval_weeks = max_reval_weeks;
         int nbadweeks = 0;
+        int max_points = 0;
         for (int j = gw; j > 0 && eval_weeks > 0; j--) {
             if (skipped_week[j])
                 continue;
-            
+
             auto gwp = p.gwpoints[j];
             p.effective_points += gwp;
             eval_weeks--;
+            if (max_points < p.gwpoints[j])
+                max_points = p.gwpoints[j];
         }
-        for(int j = gw; j > gw - bad_form_weeks; j--) {
-            if (skipped_week[j])
+        
+        
+        int counted_weeks = 0;
+        for(int j = gw; j > 0 && counted_weeks < bad_form_weeks; j--) {
+            if (skipped_week[j] || !p.gwgames[j])
                 continue;
+
+            counted_weeks++;
 
             if (p.gwpoints[j] < 3) {
                 nbadweeks++;
@@ -290,10 +318,46 @@ int Load(const string& season) {
     std::wostream& fout = *pout;
     map<wstring, int> name_to_index;
 
+    wifstream fin((season + ".txt").c_str());
+    if (!fin.is_open()) {
+        fin.open((season + "_opta.txt").c_str());
+        if (!fin.is_open()) {
+            fout << "Error reading season file" << endl;
+            return 10;
+        }
+    }
+
+    fin.imbue(std::locale(fin.getloc(), new std::codecvt_utf16<wchar_t, 0x10ffff, std::consume_header>));
+    int i;
+
+    while (fin >> i)
+    {
+        fout << i;
+        Player& p = player[i];
+
+        fin >> p.name >> p.pos >> p.points >> p.price >> p.prev_points >> p.team;
+        fout << " " << p.points << " " << p.prev_points << " " << p.price << " " << p.team << endl;
+        name_to_index[p.name] = pcount++;
+        for (int j = 0; j < 50; j++) {
+            p.gwprice[j] = 0;
+            p.gwpoints[j] = 0;
+            p.gwgames[j] = false;
+        }
+    }
+    bool xptx = false;
     fout << "loading GW data" << endl;
     wifstream finw((season + "_gw.txt").c_str());
-    if (!finw.is_open())
-        fout << "Error reading gameweeks file" << endl;
+    if (!finw.is_open()) {
+        finw.open((season + "_gw_opta.txt").c_str());
+        if (!finw.is_open()) {
+            fout << "Error reading gameweeks file" << endl;
+            max_gw = 38;
+
+            return 0;
+        }
+        xptx = true;
+        fout << "Using predicted points" << endl;
+    }
     finw.imbue(std::locale(finw.getloc(), new std::codecvt_utf16<wchar_t, 0x10ffff, std::consume_header>));
     int gw;
     max_gw = 0;
@@ -302,65 +366,22 @@ int Load(const string& season) {
         wstring name;
         finw >> name;
         auto it = name_to_index.find(name);
-        Player* p;
         if (it == name_to_index.end()) {
-            p = player + pcount;
-            name_to_index[name] = pcount++;
-            p->name = name;
-            for (int j = 0; j < 50; j++) {
-                p->gwprice[j] = 0;
-                p->gwpoints[j] = 0;
-            }
+            fout << "Player not found " << gw << " " << name << "\n";
+            int x, y;
+            finw >> x >> y;
+            continue;
         }
-        else {
-            p = player + it->second;
+        Player& p = player[it->second];
+        finw >> p.gwpoints[gw] >> p.gwprice[gw];
+        if (xptx) {
+            fin >> p.gwxpts[gw];
         }
-        finw >> p->gwpoints[gw] >> p->gwprice[gw];
         if (gw > max_gw) {
             max_gw = gw;
         }
+        p.gwgames[gw] = true;
     }
-
-    wifstream fin((season + ".txt").c_str());
-    if (!fin.is_open()) {
-        fout << "No previous season found, estimating points...\n";
-        for (int i = 0; i < pcount; i++) {
-            player[i].prev_points = player[i].price * 20;
-            player[i].points = 0;
-            player[i].team = i; // <TODO> change to load team file
-            for (int j = 0; j < 50; j++) {
-                player[i].points += player[i].gwpoints[j];
-            }
-        }
-    }
-    else {
-        fout << "Error reading season file" << endl;
-
-        fin.imbue(std::locale(fin.getloc(), new std::codecvt_utf16<wchar_t, 0x10ffff, std::consume_header>));
-        int i;
-
-        while (fin >> i)
-        {
-            wstring name;
-            fin >> name;
-
-            auto it = name_to_index.find(name);
-            Player* p;
-            if (it == name_to_index.end()) {
-                int x;
-                fin >> x >> x >> x >> x >> x;
-                fout << "Player not found : " << name << endl;
-                continue;
-            }
-            else {
-                p = player + it->second;
-            }
-            fin >> p->pos >> p->points >> p->price >> p->prev_points >> p->team;
-            fout << it->second << " " << name << " " << p->points << " " << p->prev_points << " " << p->price << " " << p->team << endl;
-        }
-    }
-    fout.flush();
-
 
     // Fill missing prices
     for (int i = 0; i < pcount; i++) {
@@ -477,9 +498,14 @@ int DoSeasonLoop(int* team, int budget) {
     std::wostream& fout = *pout;
     int points = 0;
     int prevw = 0;
-    int nwc = 2;
+    int nwc = 1;
    
+    bool secondwc = false;
     for (int w = 2; w <= max_gw; w+=2) {
+        if (w > 19 && !secondwc) {
+            secondwc = true;
+            nwc++;
+        }
         if (skipped_week[w]) {
             w--;
             continue;
@@ -490,7 +516,9 @@ int DoSeasonLoop(int* team, int budget) {
 
         fout << "\n\nTEAM at gw " << w << " :" << endl;
         int old_price, new_price;
-        points += print_sol(team, prevw+1, w, old_price, new_price);
+        points += print_sol(team, prevw+1, w, old_price, new_price, false, false);
+        fout << "Points so far = " << points << endl;
+        fout << "*******************************\n";
         int bank = budget - old_price;
         budget = new_price + bank;
         init();
@@ -505,9 +533,9 @@ int DoSeasonLoop(int* team, int budget) {
         }
         fout << "Skipped Players = " << skipped_players << endl;
 
-        if (wcafter != 0 && skipped_players > wcafter && w >= 3 && nwc > 0
-            || wcafter != 0 && w >=8 && nwc ==2 
-            || wcafter != 0 && w >= 25 && nwc == 1 
+        if (  wcafter != 0 && skipped_players > wcafter && w >= 3 && nwc > 0
+            //|| wcafter != 0 && w >=8 && nwc > 0 
+            //|| wcafter != 0 && w >= 28 && nwc > 0 
             || w == 39) {
             fout << "Wildcard at w " << w << "\n";
             squad_target = ALL;
@@ -535,7 +563,7 @@ int DoSeasonLoop(int* team, int budget) {
         for(int i=0; i< 11; i++) {
             Player* p = player + team[i];
             if (p->skip) {
-                blanker.emplace(p->points, i);
+                blanker.emplace(p->effective_points, i);
                 if (blanker.size() > 2) {
                     p = player + team[blanker.begin()->second];
                     blanker.erase(blanker.begin());
@@ -564,7 +592,7 @@ int DoSeasonLoop(int* team, int budget) {
                 break;
             }
             npbudget -= p->gwprice[w];
-            if (p->team == 14)
+            if (p->team == LIVERPOOL)
                 lp++;
         }
        
@@ -572,39 +600,176 @@ int DoSeasonLoop(int* team, int budget) {
         if (blanker.size() < 2) {
             fout << "NO TRANSFERS in gw " << w << endl;
             w--;
-            continue;
-        }
-
-        vector<int> newplayer((size_t)2);
-        pre_selected = 9;
-        squad_target = 2;
-        solve(0, gk, df, md, fw, lp, npbudget);
-        if (!get_sol(newplayer.data(), gk, df, md, fw, lp, npbudget)) {
-            fout << " NO SOLUTION-----------------\n";
-            w--;
         }
         else {
-            fout << endl;
-            int i = 0;
-            for (auto it = blanker.begin(); it != blanker.end(); it++) {
-                fout << "\nTransfer out " << player[team[it->second]].name << endl;
-                fout << "Transfer in " << player[newplayer[i]].name << endl;
-                team[it->second] = newplayer[i];
-                i++;
+
+            vector<int> newplayer((size_t)2);
+            pre_selected = 9;
+            squad_target = 2;
+            solve(0, gk, df, md, fw, lp, npbudget);
+            if (!get_sol(newplayer.data(), gk, df, md, fw, lp, npbudget)) {
+                fout << " NO SOLUTION-----------------\n";
+                w--;
+            }
+            else {
+                fout << endl;
+                int i = 0;
+                for (auto it = blanker.begin(); it != blanker.end(); it++) {
+                    fout << "\nTransfer out " << player[team[it->second]].name << endl;
+                    fout << "Transfer in " << player[newplayer[i]].name << endl;
+                    team[it->second] = newplayer[i];
+                    i++;
+                }
             }
         }
-        fout << "Points so far = " << points << endl;
-        fout << "*******************************\n";
     }
 
     pre_selected = 0;
     squad_target = ALL;
     return points;
 }
+
+int DoXptsSeasonLoop(int* team, int budget) {
+    std::wostream& fout = *pout;
+    int points = 0;
+    int prevw = 0;
+    int nwc = 1;
+
+    bool secondwc = false;
+    for (int w = 2; w <= max_gw; w += 2) {
+        if (w > 19 && !secondwc) {
+            secondwc = true;
+            nwc++;
+        }
+        if (skipped_week[w]) {
+            w--;
+            continue;
+        }
+        if (w >= 3) {
+            bad_form_weeks = 3;
+        }
+
+        fout << "\n\nTEAM at gw " << w << " :" << endl;
+        int old_price, new_price;
+        points += print_sol(team, prevw + 1, w, old_price, new_price, false, false);
+        fout << "Points so far = " << points << endl;
+        fout << "*******************************\n";
+        int bank = budget - old_price;
+        budget = new_price + bank;
+        init();
+        reval_players(w);
+
+        int skipped_players = 0;
+        for (int i = 0; i < 11; i++) {
+            Player* p = player + team[i];
+            if (p->skip) {
+                skipped_players++;
+            }
+        }
+        fout << "Skipped Players = " << skipped_players << endl;
+
+        if (wcafter != 0 && skipped_players > wcafter && w >= 3 && nwc > 0
+            //|| wcafter != 0 && w >=8 && nwc > 0 
+            //|| wcafter != 0 && w >= 28 && nwc > 0 
+            || w == 39) {
+            fout << "Wildcard at w " << w << "\n";
+            squad_target = ALL;
+            pre_selected = 0;
+            solve(0, GK, DF, MD, FW, 0, budget);
+
+            get_sol(team, budget);
+            prevw = w;
+            w--;
+            nwc--;
+            continue;
+        }
+        prevw = w;
+
+
+        multimap<int, int> blanker;
+        int gk = GK;
+        int df = DF;
+        int md = MD;
+        int fw = FW;
+        int lp = 0;
+
+        fout << endl;
+        int npbudget = budget;
+        for (int i = 0; i < 11; i++) {
+            Player* p = player + team[i];
+            if (p->skip) {
+                blanker.emplace(p->effective_points, i);
+                if (blanker.size() > 2) {
+                    p = player + team[blanker.begin()->second];
+                    blanker.erase(blanker.begin());
+                }
+                else {
+                    continue;
+                }
+            }
+            p->skip = true;
+
+            switch (p->pos) {
+            case 1:
+                gk--;
+                break;
+            case 2:
+                df--;
+                break;
+            case 3:
+                md--;
+                break;
+            case 4:
+                fw--;
+                break;
+            default:
+                fout << "Unknnown Position: Should never happen\n";
+                break;
+            }
+            npbudget -= p->gwprice[w];
+            if (p->team == LIVERPOOL)
+                lp++;
+        }
+
+        fout << "***********TRANSFERS**********\n";
+        if (blanker.size() < 2) {
+            fout << "NO TRANSFERS in gw " << w << endl;
+            w--;
+        }
+        else {
+
+            vector<int> newplayer((size_t)2);
+            pre_selected = 9;
+            squad_target = 2;
+            solve(0, gk, df, md, fw, lp, npbudget);
+            if (!get_sol(newplayer.data(), gk, df, md, fw, lp, npbudget)) {
+                fout << " NO SOLUTION-----------------\n";
+                w--;
+            }
+            else {
+                fout << endl;
+                int i = 0;
+                for (auto it = blanker.begin(); it != blanker.end(); it++) {
+                    fout << "\nTransfer out " << player[team[it->second]].name << endl;
+                    fout << "Transfer in " << player[newplayer[i]].name << endl;
+                    team[it->second] = newplayer[i];
+                    i++;
+                }
+            }
+        }
+    }
+
+    pre_selected = 0;
+    squad_target = ALL;
+    return points;
+}
+
+int MainWithDef(const string& season, const string& mode, int def);
+
 int main(int argc, char** argv)
 {
     //_setmode(_fileno(stdout), _O_WTEXT); // <=== Windows madness
-  
+
     if (argc < 2) {
         *pout << "Please specify season .\n";
         return 7;
@@ -613,24 +778,25 @@ int main(int argc, char** argv)
     string mode;
     if (argc > 2) {
         mode = argv[2];
-        if (argc > 3 )
+        if (argc > 3)
             sscanf_s(argv[3], "%d", &wcafter);
     }
 
     char envvar[100];
     size_t l;
-    if (getenv_s(&l, envvar, "FILEOUT") ==0 && string(envvar, l) != "") {
+    if (getenv_s(&l, envvar, "FILEOUT") == 0 && string(envvar, l) != "") {
         pout = &filestream;
         filestream.open((season + "_" + envvar).c_str());
         filestream.imbue(std::locale(filestream.getloc(), new std::ctype<wchar_t>()));
     }
-    std::wostream& fout = *pout;
-   
+    
     int err = Load(season);
     if (err != 0) {
         return err;
     }
 
+    std::wostream& fout = *pout;
+    
     for (int j = 0; j < 50; j++) {
         skipped_week[j] = false;
     }
@@ -659,9 +825,17 @@ int main(int argc, char** argv)
     if (mode == "step") {
         highest_points = DoSeasonLoop(team, BUDGET);
     }
-    else {
+    else if (mode == "wc") {
         Wildcard(0, 0, 3, team, BUDGET);
     }
+    else {
+        int tmp1, tmp2;
+        fout << "\n\nInitial team based on last year points:" << endl;
+
+        print_sol(team, 1, max_gw, tmp1, tmp2, true);
+        return 0;
+    }
+
     // Optimum TEAM
     init();
     reval_players(1);
@@ -674,7 +848,7 @@ int main(int argc, char** argv)
     int optimal_team[11];
     get_sol(optimal_team, BUDGET);
     int tmp1, tmp2;
-    int optimal_points = print_sol(optimal_team, 1, max_gw, tmp1, tmp2);
+    int optimal_points = print_sol(optimal_team, 1, max_gw, tmp1, tmp2, false, false);
 
     fout << season.c_str() << "DEF = " << DF << " WC > " << wcafter << endl;
     fout << endl << "Delta =" << optimal_points - highest_points << " points" << endl;
