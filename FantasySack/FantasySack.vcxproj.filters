@@ -30,6 +30,9 @@
     <Text Include="2016-17_gw.txt" />
     <Text Include="2016-17.txt" />
     <Text Include="2018-19_gw_opta.txt" />
+    <Text Include="2019-20_gw_org.txt" />
+    <Text Include="2019-20_org.txt" />
+    <Text Include="2020-21_org.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="2018-19_opta.txt" />
