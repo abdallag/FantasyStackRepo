@@ -139,7 +139,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ExpectedPointsStrategy.cpp" />
     <ClCompile Include="FantasySack.cpp" />
+    <ClCompile Include="PointsStrategy.cpp" />
+    <ClCompile Include="Season.cpp" />
+    <ClCompile Include="Solver.cpp" />
+    <ClCompile Include="Team.cpp" />
+    <ClCompile Include="Utils.cpp" />
+    <ClCompile Include="WildCardStrategy.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="2016-17.txt" />
@@ -158,6 +165,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="2018-19_opta.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ExpectedPointsStrategy.h" />
+    <ClInclude Include="PointsStrategy.h" />
+    <ClInclude Include="Season.h" />
+    <ClInclude Include="Solver.h" />
+    <ClInclude Include="Team.h" />
+    <ClInclude Include="Utils.h" />
+    <ClInclude Include="WildCardStrategy.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
