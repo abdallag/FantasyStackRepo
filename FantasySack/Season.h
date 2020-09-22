@@ -31,11 +31,9 @@ class Season
 {
 public:
     static const int COUNT = 700;
-    static const int LIVERPOOL = 12;
+    static const int LIVERPOOL = 14;
 
     Player* player = new Player[COUNT];
-    bool skipped_week[50] = { 0 };
-
     int pcount = 0;
     int max_gw = 0;
 

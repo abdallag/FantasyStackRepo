@@ -12,11 +12,7 @@ int DoXptsSeasonLoop(Season& season, Team& team, Solver& solver) {
             secondwc = true;
             nwc++;
         }
-        if (season.skipped_week[w]) {
-            w--;
-            continue;
-        }
-
+        
         fout << "\n\nTEAM at gw " << w << " :" << std::endl;
         points += team.print_sol(prevw, w, false, false);
         fout << "Points so far = " << points << std::endl;

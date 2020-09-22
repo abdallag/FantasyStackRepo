@@ -36,9 +36,6 @@ void Season::ResetPlayers(int gw) {
         int nbadweeks = 0;
         int max_points = 0;
         for (int j = gw; j > 0 && eval_weeks > 0; j--) {
-            if (skipped_week[j])
-                continue;
-
             auto gwp = p.gwpoints[j];
             p.effective_points += gwp;
             eval_weeks--;
@@ -49,7 +46,7 @@ void Season::ResetPlayers(int gw) {
 
         int counted_weeks = 0;
         for (int j = gw; j > 0 && counted_weeks < bad_form_weeks; j--) {
-            if (skipped_week[j] || !p.gwgames[j])
+            if (!p.gwgames[j])
                 continue;
 
             counted_weeks++;
@@ -216,16 +213,9 @@ int Season::Load(bool xpts) {
     }
     fout << std::endl;
 
-    for (int j = 0; j < 50; j++) {
-        skipped_week[j] = false;
-    }
-
     if (seasonName == "2019-20") {
         max_wildcards = 3;
-        fixed_wcweek = 39;
-        for (int i = 30; i < 39; i++) {
-            skipped_week[i] = true;
-        }
+        fixed_wcweek = 30;
     }
 
     return 0;

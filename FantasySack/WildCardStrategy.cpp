@@ -62,10 +62,6 @@ void Wildcard(Season& season, Team& team, Solver& solver, int i, int points, int
     }
 
     for (int w = start; w <= end; w++) {
-        if (season.skipped_week[w]) {
-            continue;
-        }
-
         WILDCARD_WEEK[i] = w;
         int prevw = 1;
         if (i > 0)

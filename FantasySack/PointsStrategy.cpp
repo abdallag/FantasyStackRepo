@@ -12,10 +12,6 @@ int DoSeasonLoop(Season& season, Team& team, Solver& solver,int wcafter) {
             secondwc = true;
             nwc++;
         }
-        if (season.skipped_week[w]) {
-            w--;
-            continue;
-        }
         if (w >= 3) {
             season.bad_form_weeks = 3;
         }
