@@ -158,6 +158,9 @@ int Season::Load(bool xpts) {
         int gw;
         while (fin >> gw)
         {
+            if (gw > max_gw) {
+                max_gw = gw;
+            }
             std::wstring name;
             int points, price;
             fin >> name >> points >> price;
@@ -223,10 +226,17 @@ int Season::Load(bool xpts) {
 
 void Season::ApplyXpts(int gw, int weeks) {
     for (int i = 0; i < pcount; i++) {
-        player[i].effective_points = 0;
+        Player& p = player[i];
+        p.effective_points = 0;
         for (int j = 0; j < weeks; j++) {
-            player[i].effective_points += player[i].gwxpts[gw + j];
+            p.effective_points += p.gwxpts[gw + j];
         }
-        player[i].skip = false;
+        if (p.prev_points == 0) {
+            p.skip = true;
+        }
+        else {
+            p.skip = false;
+        }
+
     }
 }

@@ -19,7 +19,7 @@ using namespace std;
 
 int main(int argc, char** argv)
 {
-    //_setmode(_fileno(stdout), _O_WTEXT); // <=== Windows madness
+    _setmode(_fileno(stdout), _O_WTEXT); // <=== Windows madness
 
     if (argc < 2) {
         wcout << "Please specify season .\n";
