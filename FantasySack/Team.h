@@ -21,5 +21,6 @@ public:
     inline short GetAllAvailableFunds(int w) {
         return GetTeamValue(w) + bank;
     }
+    bool Seed(std::string seedfile, int w, short budget);;
 };
 

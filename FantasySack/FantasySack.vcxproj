@@ -120,6 +120,11 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
+      <AdditionalOptions>"C:\Users\Abdalla\source\repos\absl-cpp\out\build\x64-Release\absl\flags\*.lib" "C:\Users\Abdalla\source\repos\absl-cpp\out\build\x64-Release\absl\synchronization\*.lib" "C:\Users\Abdalla\source\repos\absl-cpp\out\build\x64-Release\absl\base\*.lib" "C:\Users\Abdalla\source\repos\absl-cpp\out\build\x64-Release\absl\strings\*.lib" "C:\Users\Abdalla\source\repos\absl-cpp\out\build\x64-Release\absl\hash\*.lib" "C:\Users\Abdalla\source\repos\absl-cpp\out\build\x64-Release\absl\container\*.lib" "C:\Users\Abdalla\source\repos\absl-cpp\out\build\x64-Release\absl\time\*.lib" "C:\Users\Abdalla\source\repos\absl-cpp\out\build\x64-Release\absl\types\*.lib" "C:\Users\Abdalla\source\repos\absl-cpp\out\build\x64-Release\absl\debugging\*.lib" "C:\Users\Abdalla\source\repos\absl-cpp\out\build\x64-Release\absl\numeric\*.lib" %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -130,12 +135,18 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\Users\Abdalla\source\repos\absl-cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
+      <AdditionalOptions>"C:\Users\Abdalla\source\repos\absl-cpp\out\build\x64-Release\absl\flags\*.lib" "C:\Users\Abdalla\source\repos\absl-cpp\out\build\x64-Release\absl\synchronization\*.lib" "C:\Users\Abdalla\source\repos\absl-cpp\out\build\x64-Release\absl\base\*.lib" "C:\Users\Abdalla\source\repos\absl-cpp\out\build\x64-Release\absl\strings\*.lib" "C:\Users\Abdalla\source\repos\absl-cpp\out\build\x64-Release\absl\hash\*.lib" "C:\Users\Abdalla\source\repos\absl-cpp\out\build\x64-Release\absl\container\*.lib" "C:\Users\Abdalla\source\repos\absl-cpp\out\build\x64-Release\absl\time\*.lib" "C:\Users\Abdalla\source\repos\absl-cpp\out\build\x64-Release\absl\types\*.lib" "C:\Users\Abdalla\source\repos\absl-cpp\out\build\x64-Release\absl\debugging\*.lib" "C:\Users\Abdalla\source\repos\absl-cpp\out\build\x64-Release\absl\numeric\*.lib" %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -166,6 +177,7 @@
     <Text Include="2020-21_gw_opta.txt" />
     <Text Include="2020-21_xpts_sum.txt" />
     <Text Include="2020-21_opta.txt" />
+    <Text Include="seed.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="2018-19_opta.txt" />

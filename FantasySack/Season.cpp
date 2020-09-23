@@ -1,5 +1,27 @@
 #include "Season.h"
 
+bool Player::AddToSquadTotals(int& gk, int& df, int& md, int& fw, int& lp, int delta) {
+    switch (pos) {
+    case 1:
+        gk -= delta;
+        break;
+    case 2:
+        df -= delta;
+        break;
+    case 3:
+        md -= delta;
+        break;
+    case 4:
+        fw -= delta;
+        break;
+    default:
+        return false;
+    }
+    if (team == Season::LIVERPOOL)
+        lp += delta;
+    return true;
+}
+
 Season::Season(const std::string season_name) : seasonName(season_name) {
     char envvar[100];
     size_t l;
@@ -10,13 +32,13 @@ Season::Season(const std::string season_name) : seasonName(season_name) {
     }
 }
 
-int Season::FindPlayer(const std::wstring& player_name) {
+int Season::FindPlayer(const std::wstring& player_name, int minMatchTokens) {
     int maxMatch = 0;
     int maxi = -1;
     for (int i = 0; i < pcount; i++) {
         const std::wstring& other_name = player[i].name;
         int match = MatchNames(player_name, other_name);
-        if (match > 1 && match > maxMatch) {
+        if (match >= minMatchTokens && match > maxMatch) {
             maxMatch = match;
             maxi = i;
         }

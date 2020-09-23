@@ -1,6 +1,10 @@
+#include <absl/flags/flag.h>
 #include "PointsStrategy.h"
 
-int DoSeasonLoop(Season& season, Team& team, Solver& solver,int wcafter) {
+ABSL_FLAG(int, wcafter, 0, "Wild Card after this number of blanking players");
+
+int DoSeasonLoop(Season& season, Team& team, Solver& solver) {
+    int wcafter = absl::GetFlag(FLAGS_wcafter);
     std::wostream& fout = *season.pout;
     int points = 0;
     int prevw = 0;
@@ -128,6 +132,8 @@ int DoSeasonLoop(Season& season, Team& team, Solver& solver,int wcafter) {
     points += team.print_sol(38, 39, false, false);
     fout << "Points so far = " << points << std::endl;
     fout << "*******************************\n";
+
+    fout << " DEF = " << Solver::DF << " WC > " << wcafter << std::endl;
 
     return points;
 }

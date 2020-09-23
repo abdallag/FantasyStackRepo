@@ -1,3 +1,5 @@
+#include <vector>
+
 #include "ExpectedPointsStrategy.h"
 
 int DoXptsSeasonLoop(Season& season, Team& team, Solver& solver) {
@@ -32,63 +34,55 @@ int DoXptsSeasonLoop(Season& season, Team& team, Solver& solver) {
         fout << std::endl;
         for (int i = 0; i < 11; i++) {
             Player* p = season.player + team.team[i];
-            blanker.emplace(p->effective_points, i);
             p->skip = true;
-            if (blanker.size() > 2) {
-                auto rit = blanker.rbegin();
-                p = season.player + team.team[rit->second];
-                rit++;
-                blanker.erase(rit.base());
-            }
-            else {
-                continue;
-            }
-
-            // This is a player we are not skipping
-            // Let's not select again and make sure
-            // it is execluded from the lines
-            // and not account its budget
-
-            switch (p->pos) {
-            case 1:
-                gk--;
-                break;
-            case 2:
-                df--;
-                break;
-            case 3:
-                md--;
-                break;
-            case 4:
-                fw--;
-                break;
-            default:
-                fout << "Unknnown Position: Should never happen\n";
-                break;
-            }
-            if (p->team == Season::LIVERPOOL)
-                lp++;
+            p->AddToSquadTotals(gk, df, md, fw, lp, 1);
         }
 
         // Adjust budget after selling transers
         const int MAX_PLAYERS_TO_TRANSFER = 2;
-        int old_players[MAX_PLAYERS_TO_TRANSFER];
-        int new_players[MAX_PLAYERS_TO_TRANSFER];
+        std::vector<int> old_players(MAX_PLAYERS_TO_TRANSFER);
+        std::vector<int> new_players(MAX_PLAYERS_TO_TRANSFER);
 
-        auto it = blanker.begin();
-        int npbudget = team.bank;
-        for (int i = 0; i < MAX_PLAYERS_TO_TRANSFER; i++) {
-            Player* p = season.player + team.team[it->second];
-            old_players[i] = it->second;
-            it++;
-            npbudget += team.GetPlayerValue(w, old_players[i]);
+        short max_delta = SHRT_MIN;
+        std::vector<int> max_old(2);
+        std::vector<int> max_new(2);
+        
+        for (int i = 0; i < 11; i++) {
+            Player* p = season.player + team.team[i];
+            p->AddToSquadTotals(gk, df, md, fw, lp, -1);
+            old_players[0] = i;
+            for (int j = 0; j < 11; j++) {
+                if (i == j)
+                    continue;
+            
+                Player* p2 = season.player + team.team[j];
+                p2->AddToSquadTotals(gk, df, md, fw, lp, -1);
+                old_players[1] = j;
+                
+                int npbudget = team.bank;
+                npbudget += team.GetPlayerValue(w, old_players[0]);
+                npbudget += team.GetPlayerValue(w, old_players[1]);
+
+                solver.Solve(0, gk, df, md, fw, lp, npbudget, 2);
+                if (solver.GetSolution(new_players.data(), gk, df, md, fw, lp, npbudget)) {
+                    short gain = season.player[new_players[0]].effective_points
+                        + season.player[new_players[1]].effective_points
+                        - season.player[team.team[old_players[0]]].effective_points
+                        - season.player[team.team[old_players[1]]].effective_points;
+
+                    if (gain > max_delta) {
+                        max_delta = gain;
+                        max_old = old_players;
+                        max_new = new_players;
+                    }
+                }
+                p2->AddToSquadTotals(gk, df, md, fw, lp, 1);
+            }
+            p->AddToSquadTotals(gk, df, md, fw, lp, 1);
         }
-
-       
         fout << "***********TRANSFERS**********\n";
-        fout << "Within " << npbudget << " budget\n";
-        solver.Solve(0, gk, df, md, fw, lp, npbudget, 2);
-        if (!solver.GetSolution(new_players, gk, df, md, fw, lp, npbudget)) {
+        if (max_delta == SHRT_MIN) 
+        {
             fout << " NO SOLUTION-----------------\n";
             w--;
         }
@@ -96,10 +90,11 @@ int DoXptsSeasonLoop(Season& season, Team& team, Solver& solver) {
             fout << std::endl;
             int i = 0;
             for (int i = 0; i < MAX_PLAYERS_TO_TRANSFER; i++) {
-                fout << "\nTransfer out " << season.player[team.team[old_players[i]]].name << std::endl;
-                fout << "Transfer in " << season.player[new_players[i]].name << std::endl;
-                team.UpdatePlayer(w, old_players[i], new_players[i]);
+                fout << "\nTransfer out " << season.player[team.team[max_old[i]]].name << std::endl;
+                fout << "Transfer in " << season.player[max_new[i]].name << std::endl;
+                team.UpdatePlayer(w, max_old[i], max_new[i]);
             }
+            fout << "Expected gain = " << max_delta << std::endl;
         }
     }
 

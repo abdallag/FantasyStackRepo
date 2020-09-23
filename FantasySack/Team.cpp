@@ -1,5 +1,7 @@
 #include "Team.h"
 
+using namespace std;
+
 Team::Team(Season* s) : season(s) {
 
 }
@@ -90,4 +92,44 @@ void Team::UpdatePlayer(int w, int i, int pi) {
     int newValue = season->player[pi].gwprice[w];
     cost[i] = newValue;
     bank += oldValue - newValue;
+}
+
+
+
+bool Team::Seed(std::string seedfile, int w , short budget)
+{
+    std::wostream& fout = *season->pout;
+
+    std::wifstream fin(seedfile.c_str());
+    if (!fin.is_open()) {
+        fout << "Error reading seed file" << std::endl;
+        return false;
+    }
+
+    fin.imbue(std::locale(fin.getloc(), new std::codecvt_utf16<wchar_t, 0x10ffff, std::consume_header>));
+
+    wstring name;
+    int i = 0;
+    for (; i < 11 && (fin >> name); i++) {
+        int ind = season->FindPlayer(name, 1);
+        if (ind < 0) {
+            fout << "Player not found : " << name << endl;
+            return false;
+        }
+
+        team[i] = ind;
+    }
+
+    if (i < 11) {
+        fout << "Team too small. Only " << i << " players!\n";
+        return false;
+    }
+     
+    if (fin >> name) {
+        fout << "Too many players provided. Delete all players starting " << name << endl;
+        return false;
+    }
+
+    RefreshCost(w, budget);
+    return true;
 }

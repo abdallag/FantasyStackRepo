@@ -24,6 +24,8 @@ struct Player
     short gwpoints[50];
     short gwxpts[50];
     bool gwgames[50];
+
+    bool AddToSquadTotals(int& gk, int& df, int& md, int& fw, int& lp, int delta);
 };
 
 
@@ -46,7 +48,7 @@ public:
     
     Season(const std::string season_name);
 
-    int FindPlayer(const std::wstring& player_name);
+    int FindPlayer(const std::wstring& player_name, int minMatchTokens = 2);
 
     int max_reval_weeks = 0;
     int bad_form_weeks = 3;
