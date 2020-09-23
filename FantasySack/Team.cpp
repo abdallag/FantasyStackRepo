@@ -127,6 +127,7 @@ bool Team::Seed(std::string seedfile, int w , short budget)
             return false;
         }
 
+        fin >> cost[i];
         team[i] = ind;
     }
 
@@ -140,6 +141,6 @@ bool Team::Seed(std::string seedfile, int w , short budget)
         return false;
     }
 
-    RefreshCost(w, budget);
+    bank = 0;
     return true;
 }
