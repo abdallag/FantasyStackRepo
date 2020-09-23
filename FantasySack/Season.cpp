@@ -204,7 +204,9 @@ int Season::Load(bool xpts) {
                     if (p.gwpoints[gw] == 0) {
                         p.gwpoints[gw] = points;
                     }
-                    continue;
+                    else {
+                        continue;
+                    }
                 }
                 lookup.emplace(name, ind);
                 it = lookup.find(name);

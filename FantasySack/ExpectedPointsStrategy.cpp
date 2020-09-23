@@ -1,8 +1,12 @@
 #include <vector>
 
+#include <absl/flags/flag.h>
+
 #include "ExpectedPointsStrategy.h"
 
 using namespace std;
+
+ABSL_FLAG(bool, wceval, 0, "Evalute playing a wildcard at each week");
 
 int DoXptsSeasonLoop(Season& season, Team& team, Solver& solver) {
     wostream& fout = *season.pout;
@@ -21,6 +25,17 @@ int DoXptsSeasonLoop(Season& season, Team& team, Solver& solver) {
         points += team.print_sol(prevw, w, false, false);
         fout << "Points so far = " << points << endl;
         fout << "*******************************\n";
+
+        if (absl::GetFlag(FLAGS_wceval)) {
+            Team wct(team);
+            solver.Init();
+            season.ResetPlayers(w);
+            season.ApplyXpts(w, 6);
+            solver.Solve(wct, w);
+            wct.print_sol(prevw, w);
+
+            fout << "Wild card effective points = " << wct.GetEffectivePoints(prevw, w) << endl;
+        }
         solver.Init();
         season.ResetPlayers(w);
         season.ApplyXpts(w, 6);
@@ -111,7 +126,7 @@ int DoXptsSeasonLoop(Season& season, Team& team, Solver& solver) {
                 team.UpdatePlayer(w, max_old[i], max_new[i]);
             }
             fout << "Expected gain = " << max_delta << endl;
-            fout << "Effective POints = " << team.GetEffectivePoints(prevw, w) <<endl;
+            fout << "Effective points = " << team.GetEffectivePoints(prevw, w) <<endl;
         }
     }
 
