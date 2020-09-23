@@ -9,7 +9,7 @@ int DoXptsSeasonLoop(Season& season, Team& team, Solver& solver) {
     int nwc = 1;
 
     bool secondwc = false;
-    for (int w = 2; w <= season.max_gw; w += 2) {
+    for (int w = 3; w <= season.max_gw; w += 2) {
         if (w > 19 && !secondwc) {
             secondwc = true;
             nwc++;
@@ -99,7 +99,7 @@ int DoXptsSeasonLoop(Season& season, Team& team, Solver& solver) {
     }
 
     fout << "\n\nTEAM Season End " << std::endl;
-    points += team.print_sol(38, 39, false, false);
+    points += team.print_sol(season.max_gw, season.max_gw +1, false, false);
     fout << "Points so far = " << points << std::endl;
     fout << "*******************************\n";
 

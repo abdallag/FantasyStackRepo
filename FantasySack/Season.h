@@ -5,6 +5,7 @@
 #include <map>
 #include <locale>
 #include <codecvt>
+#include <set>
 
 
 #include "Utils.h"
@@ -36,6 +37,7 @@ public:
     static const int LIVERPOOL = 14;
 
     Player* player = new Player[COUNT];
+    std::set<int> excluded;
     int pcount = 0;
     int max_gw = 0;
 

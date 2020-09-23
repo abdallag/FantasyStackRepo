@@ -1,4 +1,8 @@
 #include "Season.h"
+#include "absl/flags/flag.h"
+
+ABSL_FLAG(std::string, exclude, "", "File containing players to exclude one per line.");
+
 
 bool Player::AddToSquadTotals(int& gk, int& df, int& md, int& fw, int& lp, int delta) {
     switch (pos) {
@@ -196,7 +200,10 @@ int Season::Load(bool xpts) {
                 }
                 Player& p = player[ind];
                 if (points != p.gwpoints[gw]) {
-                    fout << "Player points doesn't match: " << gw << " " << name << "\n";
+                    // fout << "Player points doesn't match: " << gw << " " << name << "\n";
+                    if (p.gwpoints[gw] == 0) {
+                        p.gwpoints[gw] = points;
+                    }
                     continue;
                 }
                 lookup.emplace(name, ind);
@@ -243,6 +250,29 @@ int Season::Load(bool xpts) {
         fixed_wcweek = 30;
     }
 
+    auto excFile = absl::GetFlag(FLAGS_exclude);
+    if (excFile != "") {
+        std::wifstream fin(excFile.c_str());
+        if (!fin.is_open()) {
+            fout << "Error reading exclusion file" << std::endl;
+            return false;
+        }
+
+        fin.imbue(std::locale(fin.getloc(), new std::codecvt_utf16<wchar_t, 0x10ffff, std::consume_header>));
+
+        std::wstring name;
+        int i = 0;
+        while (fin >> name) {
+            int ind = FindPlayer(name, 1);
+            if (ind < 0) {
+                fout << "Player not found : " << name << std::endl;
+                return 11;
+            }
+            player[ind].skip = true;
+            excluded.insert(ind);
+        }
+    }
+
     return 0;
 }
 
@@ -253,7 +283,7 @@ void Season::ApplyXpts(int gw, int weeks) {
         for (int j = 0; j < weeks; j++) {
             p.effective_points += p.gwxpts[gw + j];
         }
-        if (p.prev_points == 0) {
+        if (excluded.find(i) != excluded.end()) {
             p.skip = true;
         }
         else {
