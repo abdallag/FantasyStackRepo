@@ -15,14 +15,18 @@ public:
 	static const int ALL = 11;
 	static const int LP = 3;
 	static const int BUDGET = 1000 - 165 - (DF - 3) * 5;
-    std::set<int> exclude_players; //{ 1, 11, 12 };
-
+  
 protected:
 	short* cache[Season::COUNT + 1][GK + 1][DF + 1][MD + 1][FW + 1][LP + 1];
 	short* sol[Season::COUNT + 1][GK + 1][DF + 1][MD + 1][FW + 1][LP + 1];
 
-	int PRE_SELECTED = 0;
 	int SQUAD_TARGET = ALL;
+
+	int MAX_GK = GK;
+	int MAX_DF = DF;
+	int MAX_MD = MD;
+	int MAX_FW = FW;
+	int MAX_LP = LP;
 
     Season* season;
 
@@ -35,23 +39,31 @@ public:
     Solver(Season* s);
 
 	inline int Solve(int i, int gk, int df, int md, int fw, int lp, int budget = Solver::BUDGET, int squad_target = ALL) {
-		PRE_SELECTED = ALL - squad_target;
 		SQUAD_TARGET = squad_target;
 		return SolveInternal(i, gk, df, md, fw, lp, budget);
 	}
 
 	bool GetSolution(int* team, int gk, int df, int md, int fw, int lp, int budget);
 
+	inline void SetMax(int gk = GK, int df= DF, int md=MD, int fw=FW, int lp=LP) {
+		MAX_GK = gk;
+		MAX_DF = df;
+		MAX_MD = md;
+		MAX_FW = fw;
+		MAX_LP = lp;
+	}
+
 	inline int Solve(Team& team, int w) {
 		int budget = BUDGET;
 		if (w != 1) {
 			budget = team.GetAllAvailableFunds(w);
 		}
-		int sol = Solve(0, GK, DF, MD, FW, 0, budget);
+		SetMax();
+		int sol = Solve(0, 0, 0, 0, 0, 0, budget);
 		if (!sol) {
 			return sol;
 		}
-		GetSolution(team.team, GK, DF, MD, FW, 0, budget);
+		GetSolution(team.team, 0, 0, 0, 0, 0, budget);
 		team.RefreshCost(w, budget);
 
 		return sol;

@@ -35,9 +35,9 @@ Solver::Solver(Season* s) :
 
 int Solver::SolveInternal(int i, int gk, int df, int md, int fw, int lp, int budget)
 {
-    int attack = MD + FW - md - fw;
-    int tot = attack + GK + DF - gk - df;
-    if (tot - PRE_SELECTED == SQUAD_TARGET)
+    int attack = md + fw;
+    int tot = attack + gk + df;
+    if (tot == SQUAD_TARGET)
         return 0;
 
     if (i >= season->pcount) {
@@ -56,8 +56,7 @@ int Solver::SolveInternal(int i, int gk, int df, int md, int fw, int lp, int bud
         price == 0 ||
         budget < price ||
         //player[i].pos == 1 && price > 45) ||
-        p.pos != 1 && gk == 1 && tot - PRE_SELECTED == SQUAD_TARGET - 1 ||
-        exclude_players.find(i) != exclude_players.end())
+        tot == SQUAD_TARGET - 1 && MAX_GK > 0 && p.pos != 1 && gk == 0)
         return res;
 
     if (p.team == Season::LIVERPOOL)
@@ -68,26 +67,26 @@ int Solver::SolveInternal(int i, int gk, int df, int md, int fw, int lp, int bud
     int gk2 = gk, df2 = df, md2 = md, fw2 = fw;
     switch (p.pos) {
     case 1:
-        if (gk != 0) {
-            gk2--;
+        if (gk != MAX_GK) {
+            gk2++;
             isok = true;
         }
         break;
     case 2:
-        if (df != 0) {
-            df2--;
+        if (df != MAX_DF) {
+            df2++;
             isok = true;
         }
         break;
     case 3:
-        if (attack < MAX_ATTACK && md != 0) {
-            md2--;
+        if (attack < MAX_ATTACK && md != MAX_MD) {
+            md2++;
             isok = true;
         }
         break;
     case 4:
-        if (attack < MAX_ATTACK && fw != 0) {
-            fw2--;
+        if (attack < MAX_ATTACK && fw != MAX_FW) {
+            fw2++;
             isok = true;
         }
         break;
@@ -101,7 +100,7 @@ int Solver::SolveInternal(int i, int gk, int df, int md, int fw, int lp, int bud
         int take = next_players_gain + my_gain;
 
         bool islast = false;
-        if (tot - PRE_SELECTED == SQUAD_TARGET - 1)
+        if (tot == SQUAD_TARGET - 1)
             islast = true;
 
         //If taking this player will not allow adding any other players,
@@ -124,9 +123,9 @@ bool Solver::GetSolution(int* team, int gk, int df, int md, int fw, int lp, int 
     int p = 0;
     bool found = false;
     for (int i = 0; i < season->pcount; i++) {
-        int attack = MD + FW - md - fw;
-        int tot = attack + GK + DF - gk - df;
-        if (tot - PRE_SELECTED == SQUAD_TARGET) {
+        int attack = md + fw;
+        int tot = attack + gk + df;
+        if (tot == SQUAD_TARGET) {
             found = true;
             break;
         }
@@ -136,16 +135,16 @@ bool Solver::GetSolution(int* team, int gk, int df, int md, int fw, int lp, int 
         team[p++] = i;
         switch (season->player[i].pos) {
         case 1:
-            gk--;
+            gk++;
             break;
         case 2:
-            df--;
+            df++;
             break;
         case 3:
-            md--;
+            md++;
             break;
         case 4:
-            fw--;
+            fw++;
             break;
         }
         budget -= season->player[i].price;

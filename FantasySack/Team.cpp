@@ -96,6 +96,16 @@ void Team::UpdatePlayer(int w, int i, int pi) {
 
 
 
+short Team::GetEffectivePoints(int startgw, int endgw)
+{
+    int points = 0;
+    for (int i = 0; i < 11; i++) {
+        Player& p = season->player[team[i]];
+        points += p.effective_points;
+    }
+    return points;
+}
+
 bool Team::Seed(std::string seedfile, int w , short budget)
 {
     std::wostream& fout = *season->pout;

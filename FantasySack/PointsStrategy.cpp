@@ -50,10 +50,10 @@ int DoSeasonLoop(Season& season, Team& team, Solver& solver) {
         prevw = w;
 
         std::multimap<int, int> blanker;
-        int gk = Solver::GK;
-        int df = Solver::DF;
-        int md = Solver::MD;
-        int fw = Solver::FW;
+        int gk = 0;
+        int df = 0;
+        int md = 0;
+        int fw = 0;
         int lp = 0;
 
         fout << std::endl;
@@ -76,25 +76,6 @@ int DoSeasonLoop(Season& season, Team& team, Solver& solver) {
             // and not account its budget
             p->skip = true;
 
-            switch (p->pos) {
-            case 1:
-                gk--;
-                break;
-            case 2:
-                df--;
-                break;
-            case 3:
-                md--;
-                break;
-            case 4:
-                fw--;
-                break;
-            default:
-                fout << "Unknnown Position: Should never happen\n";
-                break;
-            }
-            if (p->team == Season::LIVERPOOL)
-                lp++;
         }
 
         fout << "***********TRANSFERS**********\n";
@@ -110,8 +91,8 @@ int DoSeasonLoop(Season& season, Team& team, Solver& solver) {
             npbudget += team.GetPlayerValue(w, (it++)->second);
             npbudget += team.GetPlayerValue(w, it->second);
 
-            solver.Solve(0, gk, df, md, fw, lp, npbudget, 2);
-            if (!solver.GetSolution(newplayer, gk, df, md, fw, lp, npbudget)) {
+            solver.Solve(0, 0, 0, 0, 0, 0, npbudget, 2);
+            if (!solver.GetSolution(newplayer, 0, 0, 0, 0, 0, npbudget)) {
                 fout << " NO SOLUTION-----------------\n";
                 w--;
             }

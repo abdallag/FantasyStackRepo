@@ -7,16 +7,16 @@ ABSL_FLAG(std::string, exclude, "", "File containing players to exclude one per 
 bool Player::AddToSquadTotals(int& gk, int& df, int& md, int& fw, int& lp, int delta) {
     switch (pos) {
     case 1:
-        gk -= delta;
+        gk += delta;
         break;
     case 2:
-        df -= delta;
+        df += delta;
         break;
     case 3:
-        md -= delta;
+        md += delta;
         break;
     case 4:
-        fw -= delta;
+        fw += delta;
         break;
     default:
         return false;
