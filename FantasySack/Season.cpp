@@ -200,19 +200,17 @@ int Season::Load(bool xpts) {
                 }
                 Player& p = player[ind];
                 if (points != p.gwpoints[gw]) {
-                    // fout << "Player points doesn't match: " << gw << " " << name << "\n";
-                    if (p.gwpoints[gw] == 0) {
-                        p.gwpoints[gw] = points;
-                    }
-                    else {
-                        continue;
-                    }
+                    fout << "Player points doesn't match: " << gw << " " << name << "\n";
                 }
                 lookup.emplace(name, ind);
                 it = lookup.find(name);
             }
 
-            player[it->second].gwprice[gw] = price;
+            Player& p = player[it->second];
+            p.gwprice[gw] = price;
+            if (p.gwpoints[gw] == 0) {
+                p.gwpoints[gw] = points;
+            }
         }
     }
 
