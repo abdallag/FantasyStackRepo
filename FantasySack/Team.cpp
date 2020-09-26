@@ -6,7 +6,7 @@ Team::Team(Season* s) : season(s) {
 
 }
 
-int Team::print_sol(int startgw, int endgw, bool use_effective, bool captain) {
+int Team::print_sol(int startgw, int endgw, bool use_effective, bool captain, int factor) {
     std::wostream& fout = *season->pout;
 
     int max = 0;
@@ -55,7 +55,7 @@ int Team::print_sol(int startgw, int endgw, bool use_effective, bool captain) {
             fout << " points percentage = " << (100.0 * max) / points << " %\n";
         }
     }
-    fout << "Points for weeks [" << startgw << "," << endgw - 1 << "] = " << points << std::endl;
+    fout << "Points for weeks [" << startgw << "," << endgw - 1 << "] = " << points / factor << std::endl;
 
     return points;
 }
@@ -96,7 +96,7 @@ void Team::UpdatePlayer(int w, int i, int pi) {
 
 
 
-short Team::GetEffectivePoints(int startgw, int endgw)
+short Team::GetEffectivePoints()
 {
     int points = 0;
     for (int i = 0; i < 11; i++) {
@@ -120,22 +120,30 @@ bool Team::Seed(std::string seedfile, int w , short budget)
 
     wstring name;
     int i = 0;
-    for (; i < 11 && (fin >> name); i++) {
+    for (; i < 14 && (fin >> name); i++) {
         int ind = season->FindPlayer(name, 1);
         if (ind < 0) {
             fout << "Player not found : " << name << endl;
             return false;
         }
 
-        fin >> cost[i];
-        team[i] = ind;
+        if (i >= 11) {
+            fin >> bcost[bcount];
+            bench[bcount++] = ind;
+
+        }
+        else {
+            fin >> cost[i];
+            team[i] = ind;
+        }
     }
+
 
     if (i < 11) {
         fout << "Team too small. Only " << i << " players!\n";
         return false;
     }
-     
+    
     if (fin >> name) {
         fout << "Too many players provided. Delete all players starting " << name << endl;
         return false;
@@ -143,4 +151,17 @@ bool Team::Seed(std::string seedfile, int w , short budget)
 
     bank = 0;
     return true;
+}
+
+int Team::MinEffectivePlayer()
+{
+    int pmin = team[0];
+    int pi = 0;
+    for (int i = 1; i < 11; i++) {
+        if (season->player[team[i]].effective_points < pmin) {
+            pi = i;
+            pmin = season->player[team[i]].effective_points;
+        }
+    }
+    return pi;
 }

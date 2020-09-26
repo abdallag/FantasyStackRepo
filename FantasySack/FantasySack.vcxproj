@@ -180,6 +180,7 @@
     <Text Include="2020-21_opta.txt" />
     <Text Include="exclude.txt" />
     <Text Include="seed.txt" />
+    <Text Include="yseed.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="2018-19_opta.txt" />
