@@ -61,6 +61,10 @@
     <Text Include="seed.txt" />
     <Text Include="exclude.txt" />
     <Text Include="yseed.txt" />
+    <Text Include="hamalawy.txt" />
+    <Text Include="tifa.txt" />
+    <Text Include="emad.txt" />
+    <Text Include="Hany.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="2018-19_opta.txt" />

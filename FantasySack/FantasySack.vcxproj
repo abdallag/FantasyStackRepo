@@ -178,8 +178,12 @@
     <Text Include="2020-21_gw_opta.txt" />
     <Text Include="2020-21_xpts_sum.txt" />
     <Text Include="2020-21_opta.txt" />
+    <Text Include="emad.txt" />
     <Text Include="exclude.txt" />
+    <Text Include="hamalawy.txt" />
+    <Text Include="Hany.txt" />
     <Text Include="seed.txt" />
+    <Text Include="tifa.txt" />
     <Text Include="yseed.txt" />
   </ItemGroup>
   <ItemGroup>

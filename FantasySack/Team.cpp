@@ -118,6 +118,8 @@ bool Team::Seed(std::string seedfile, int w , short budget)
 
     fin.imbue(std::locale(fin.getloc(), new std::codecvt_utf16<wchar_t, 0x10ffff, std::consume_header>));
 
+    fin >> bank;
+
     wstring name;
     int i = 0;
     for (; i < 14 && (fin >> name); i++) {
@@ -149,7 +151,6 @@ bool Team::Seed(std::string seedfile, int w , short budget)
         return false;
     }
 
-    bank = 0;
     return true;
 }
 
