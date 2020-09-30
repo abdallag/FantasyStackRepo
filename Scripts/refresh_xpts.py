@@ -137,14 +137,14 @@ def main():
     df = get_gw_df(jdata);
     for i in range(1, 39):
         if not df[i].empty:
-            filename = "gw" + str(i) + ".txt"
+            filename = ".\\gwxpts\\gw" + str(i) + ".txt"
             save.save_gw_file(df[i], filename, True)
 
     lines = []
     merged_file = "20" + str(cur_start) + "-" + str(cur_start +1) + "_gw_opta.txt"
     mf = open(merged_file, encoding= 'UTF-16', mode = "w")
     for i in range(1, 39):
-        filename = "gw" + str(i) + ".txt"
+        filename = ".\\gwxpts\\gw" + str(i) + ".txt"
         if os.path.exists(filename):
             f = open(filename, encoding= 'UTF-16', mode = "r")
             lines.extend(f.readlines())
