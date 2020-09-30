@@ -113,7 +113,11 @@ def get_gw_df(jdata):
     return dfarray
 
 def main():
+    download = True;
     if os.path.exists("tmp.txt"):
+        answer = input("Cache file found, overrite (y/n)?").lower()
+
+    if answer != "y" and answer != 'yes':
         f = open("tmp.txt", encoding ='UTF-8' , mode ='r')
         data = f.read()
         f.close()
