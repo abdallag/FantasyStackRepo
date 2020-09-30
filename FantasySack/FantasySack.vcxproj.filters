@@ -65,9 +65,11 @@
     <Text Include="tifa.txt" />
     <Text Include="emad.txt" />
     <Text Include="Hany.txt" />
+    <Text Include="bishr.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="2018-19_opta.txt" />
+    <None Include="ts.json" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Season.h">
