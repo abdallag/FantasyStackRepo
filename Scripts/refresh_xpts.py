@@ -131,7 +131,7 @@ def main():
     jstr = get_json(data)
     jdata = json.loads(jstr)
    
-    filename = "20" + str(cur_start) + "-" + str(cur_start +1) + '_opta.txt'
+    filename = "../FantasySack/20" + str(cur_start) + "-" + str(cur_start +1) + '_opta.txt'
     save.save_season_file(get_season_df(jdata), filename )
 
     df = get_gw_df(jdata);
@@ -141,7 +141,7 @@ def main():
             save.save_gw_file(df[i], filename, True)
 
     lines = []
-    merged_file = "20" + str(cur_start) + "-" + str(cur_start +1) + "_gw_opta.txt"
+    merged_file = "../FantasySack/20" + str(cur_start) + "-" + str(cur_start +1) + "_gw_opta.txt"
     mf = open(merged_file, encoding= 'UTF-16', mode = "w")
     for i in range(1, 39):
         filename = ".\\gwxpts\\gw" + str(i) + ".txt"

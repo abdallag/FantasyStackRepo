@@ -53,7 +53,7 @@ def main():
 
     df = pd.concat([df, livedf])
    
-    save.save_gw_file(df, "2020-21_gw.txt", False)
+    save.save_gw_file(df, "../FantasySack/2020-21_gw.txt", False)
 
 if __name__ == '__main__':
     main()
