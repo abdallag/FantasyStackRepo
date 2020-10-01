@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>f4d60a1c-2633-473c-8128-6bddcf33efa3</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>refresh_xpts.py</StartupFile>
+    <StartupFile>refresh_prices.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -22,6 +22,12 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="parse_common.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="refresh_prices.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="refresh_xpts.py">
       <SubType>Code</SubType>
     </Compile>

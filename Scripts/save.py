@@ -6,9 +6,8 @@ def save_gw_file(df, filename, predictive):
       line = str(r.GW) + " " + str(r.player) + " " + str(r.total_points) + " " + str(r.value)
       if predictive:
         line = line + " " + str(r.xpts)
-        line = line  + "\n"
-        #print(line)
-        f.writelines( line)
+      line = line  + "\n"
+      f.writelines( line)
    f.close()
 
 def save_season_file(df, filename):
