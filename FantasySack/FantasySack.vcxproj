@@ -183,7 +183,7 @@
     <Text Include="exclude.txt" />
     <Text Include="hamalawy.txt" />
     <Text Include="Hany.txt" />
-    <Text Include="seed.txt" />
+    <Text Include="abdalla.txt" />
     <Text Include="tifa.txt" />
     <Text Include="yseed.txt" />
   </ItemGroup>

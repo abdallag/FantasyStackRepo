@@ -145,7 +145,7 @@ int Season::Load(bool xpts) {
         fin >> name;
         auto it = name_to_index.find(name);
         if (it == name_to_index.end()) {
-            fout << "Player not found " << gw << " " << name << "\n";
+            fout << "GW Look up: Player not found " << gw << " " << name << "\n";
             int x, y, z;
             fin >> x >> y;
             if (xpts) {
@@ -195,7 +195,7 @@ int Season::Load(bool xpts) {
                 int ind = FindPlayer(name);
 
                 if (ind < 0 && points > 0) {
-                    fout << "Player not found " << gw << " " << name << "\n";
+                    fout << "GW Price Look up: Player not found " << gw << " " << name << "\n";
                     continue;
                 }
                 Player& p = player[ind];
@@ -265,7 +265,7 @@ int Season::Load(bool xpts) {
         while (fin >> name) {
             int ind = FindPlayer(name, 1);
             if (ind < 0) {
-                fout << "Player not found : " << name << std::endl;
+                fout << "Exclusion: Player not found : " << name << std::endl;
                 return 11;
             }
             player[ind].skip = true;

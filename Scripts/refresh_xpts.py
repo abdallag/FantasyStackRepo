@@ -53,7 +53,7 @@ def download():
 
     print ("Downloaded succesfully!")
 
-    return html.unescape(resp.content.decode('unicode_escape'))
+    return html.unescape(resp.content.decode('utf8'))
 
 
 def get_json(htmlfile):
@@ -79,12 +79,13 @@ def get_season_df(jdata):
     
     for i in range(len(jdata)):
       p = jdata[i]
-      row = pd.DataFrame([[ p['search_term'], p["player"]["position_id"], int(float(p["season_prediction"])), p["player"]["team"], int(float(p["season_prediction"])), p["player"]["now_cost"]]],
-                         columns=[ "player", "element_type", "total_points", "team_code", "prev_points", "value"],
+      row = pd.DataFrame([[ p['search_term'], p['player']['first_name'], p['player']['second_name'] , p["player"]["position_id"], int(float(p["season_prediction"])), p["player"]["team"], int(float(p["season_prediction"])), p["player"]["now_cost"]]],
+                         columns=[ "player", "first_name", "second_name", "element_type", "total_points", "team_code", "prev_points", "value"],
                          index = [i])
       newdf = pd.concat([newdf, row])
 
-    newdf['player'] = newdf.player.str.replace(' ', '-')
+    #newdf['player'] = newdf.player.str.replace(' ', '-')
+    newdf['player'] = newdf.first_name.str.replace(' ', '-') + '_' + newdf.second_name.str.replace(' ', '-')
 
     return newdf
 
@@ -113,7 +114,6 @@ def get_gw_df(jdata):
     return dfarray
 
 def main():
-    download = True;
     if os.path.exists("tmp.txt"):
         answer = input("Cache file found, overrite (y/n)?").lower()
 
