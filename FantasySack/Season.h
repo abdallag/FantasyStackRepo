@@ -34,7 +34,7 @@ class Season
 {
 public:
     static const int COUNT = 700;
-    static const int LIVERPOOL = 14;
+    static const int LIVERPOOL = 12;
 
     Player* player = new Player[COUNT];
     std::set<int> excluded;
