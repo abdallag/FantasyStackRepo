@@ -42,10 +42,14 @@ int Season::FindPlayer(const std::wstring& player_name, int minMatchTokens) {
     for (int i = 0; i < pcount; i++) {
         const std::wstring& other_name = player[i].name;
         int match = MatchNames(player_name, other_name);
-        if (match >= minMatchTokens && match > maxMatch) {
-            maxMatch = match;
-            maxi = i;
+        if (match >= minMatchTokens) {
+            if (match > maxMatch
+                || match == maxMatch && other_name.size() < player[maxi].name.size()) {
+                maxMatch = match;
+                maxi = i;
+            }
         }
+
     }
     return maxi;
 }
@@ -262,6 +266,7 @@ int Season::Load(bool xpts) {
 
         std::wstring name;
         int i = 0;
+        fout << "\n\nExcluded players:\n\n";
         while (fin >> name) {
             int ind = FindPlayer(name, 1);
             if (ind < 0) {
@@ -270,7 +275,9 @@ int Season::Load(bool xpts) {
             }
             player[ind].skip = true;
             excluded.insert(ind);
+            fout << player[ind].name << std::endl;
         }
+        fout << std::endl;
     }
 
     return 0;

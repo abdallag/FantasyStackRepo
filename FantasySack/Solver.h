@@ -28,6 +28,8 @@ protected:
 	int MAX_FW = FW;
 	int MAX_LP = LP;
 
+	int MAX_GK_BUDGET = 1000;
+
     Season* season;
 
 	int SolveInternal(int i, int gk, int df, int md, int fw, int lp, int budget);
@@ -59,6 +61,9 @@ public:
 			budget = team.GetAllAvailableFunds(w);
 		}
 		SetMax();
+		for (int i = 0; i < 11; i++) {
+			season->player[team.team[i]].price = team.cost[i];
+		}
 		int sol = Solve(0, 0, 0, 0, 0, 0, budget);
 		if (!sol) {
 			return sol;

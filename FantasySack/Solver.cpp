@@ -1,9 +1,14 @@
 #include "Solver.h"
+#include "absl/flags/flag.h"
+
+ABSL_FLAG(int, max_gk_budget, 47, "Maximum goal keeper budget.");
 
 void Solver::Init() {
     std::wostream& fout = *season->pout;
     int total = (Season::COUNT + 1) * (GK + 1) * (DF + 1) * (MD + 1) * (FW + 1) * (LP + 1);
     if (!alloc_pool) {
+        MAX_GK_BUDGET = absl::GetFlag(FLAGS_max_gk_budget);
+        fout << "Maximum goalkeeper budget = " << MAX_GK_BUDGET << std::endl;
         fout << "Allocating Memory...\n";
         fout.flush();
         short* cache_pool = new short[total * (BUDGET + 1)];
@@ -55,7 +60,7 @@ int Solver::SolveInternal(int i, int gk, int df, int md, int fw, int lp, int bud
     if (p.skip ||
         price == 0 ||
         budget < price ||
-        //player[i].pos == 1 && price > 45) ||
+        p.pos == 1 && price > MAX_GK_BUDGET ||
         tot == SQUAD_TARGET - 1 && MAX_GK > 0 && p.pos != 1 && gk == 0)
         return res;
 
