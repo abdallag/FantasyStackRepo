@@ -116,7 +116,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\Abdalla\source\repos\absl-cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Abdalla\source\repos\abseil-cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -125,7 +125,7 @@
       </AdditionalDependencies>
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
-      <AdditionalOptions>"C:\Users\Abdalla\source\repos\absl-cpp\out\build\x64-Debug\absl\flags\*.lib" "C:\Users\Abdalla\source\repos\absl-cpp\out\build\x64-Debug\absl\synchronization\*.lib" "C:\Users\Abdalla\source\repos\absl-cpp\out\build\x64-Debug\absl\base\*.lib" "C:\Users\Abdalla\source\repos\absl-cpp\out\build\x64-Debug\absl\strings\*.lib" "C:\Users\Abdalla\source\repos\absl-cpp\out\build\x64-Debug\absl\hash\*.lib" "C:\Users\Abdalla\source\repos\absl-cpp\out\build\x64-Debug\absl\container\*.lib" "C:\Users\Abdalla\source\repos\absl-cpp\out\build\x64-Debug\absl\time\*.lib" "C:\Users\Abdalla\source\repos\absl-cpp\out\build\x64-Debug\absl\types\*.lib" "C:\Users\Abdalla\source\repos\absl-cpp\out\build\x64-Debug\absl\debugging\*.lib" "C:\Users\Abdalla\source\repos\absl-cpp\out\build\x64-Debug\absl\numeric\*.lib" %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>"C:\Users\Abdalla\source\repos\abseil-cpp\out\build\x64-Debug\absl\flags\*.lib" "C:\Users\Abdalla\source\repos\abseil-cpp\out\build\x64-Debug\absl\synchronization\*.lib" "C:\Users\Abdalla\source\repos\abseil-cpp\out\build\x64-Debug\absl\base\*.lib" "C:\Users\Abdalla\source\repos\abseil-cpp\out\build\x64-Debug\absl\strings\*.lib" "C:\Users\Abdalla\source\repos\abseil-cpp\out\build\x64-Debug\absl\hash\*.lib" "C:\Users\Abdalla\source\repos\abseil-cpp\out\build\x64-Debug\absl\container\*.lib" "C:\Users\Abdalla\source\repos\abseil-cpp\out\build\x64-Debug\absl\time\*.lib" "C:\Users\Abdalla\source\repos\abseil-cpp\out\build\x64-Debug\absl\types\*.lib" "C:\Users\Abdalla\source\repos\abseil-cpp\out\build\x64-Debug\absl\debugging\*.lib" "C:\Users\Abdalla\source\repos\abseil-cpp\out\build\x64-Debug\absl\numeric\*.lib" %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -136,7 +136,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\Abdalla\source\repos\absl-cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Abdalla\source\repos\abseil-cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -147,7 +147,7 @@
       </AdditionalLibraryDirectories>
       <AdditionalDependencies>
       </AdditionalDependencies>
-      <AdditionalOptions>"C:\Users\Abdalla\source\repos\absl-cpp\out\build\x64-Release\absl\flags\*.lib" "C:\Users\Abdalla\source\repos\absl-cpp\out\build\x64-Release\absl\synchronization\*.lib" "C:\Users\Abdalla\source\repos\absl-cpp\out\build\x64-Release\absl\base\*.lib" "C:\Users\Abdalla\source\repos\absl-cpp\out\build\x64-Release\absl\strings\*.lib" "C:\Users\Abdalla\source\repos\absl-cpp\out\build\x64-Release\absl\hash\*.lib" "C:\Users\Abdalla\source\repos\absl-cpp\out\build\x64-Release\absl\container\*.lib" "C:\Users\Abdalla\source\repos\absl-cpp\out\build\x64-Release\absl\time\*.lib" "C:\Users\Abdalla\source\repos\absl-cpp\out\build\x64-Release\absl\types\*.lib" "C:\Users\Abdalla\source\repos\absl-cpp\out\build\x64-Release\absl\debugging\*.lib" "C:\Users\Abdalla\source\repos\absl-cpp\out\build\x64-Release\absl\numeric\*.lib" %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>"C:\Users\Abdalla\source\repos\abseil-cpp\out\build\x64-Release\absl\flags\*.lib" "C:\Users\Abdalla\source\repos\abseil-cpp\out\build\x64-Release\absl\synchronization\*.lib" "C:\Users\Abdalla\source\repos\abseil-cpp\out\build\x64-Release\absl\base\*.lib" "C:\Users\Abdalla\source\repos\abseil-cpp\out\build\x64-Release\absl\strings\*.lib" "C:\Users\Abdalla\source\repos\abseil-cpp\out\build\x64-Release\absl\hash\*.lib" "C:\Users\Abdalla\source\repos\abseil-cpp\out\build\x64-Release\absl\container\*.lib" "C:\Users\Abdalla\source\repos\abseil-cpp\out\build\x64-Release\absl\time\*.lib" "C:\Users\Abdalla\source\repos\abseil-cpp\out\build\x64-Release\absl\types\*.lib" "C:\Users\Abdalla\source\repos\abseil-cpp\out\build\x64-Release\absl\debugging\*.lib" "C:\Users\Abdalla\source\repos\abseil-cpp\out\build\x64-Release\absl\numeric\*.lib" %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
