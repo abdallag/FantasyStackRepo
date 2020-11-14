@@ -78,10 +78,28 @@ int DoXptsSeasonLoop(Season& season, Team& team, Solver& solver) {
             vector<int> max_old(2);
             vector<int> max_new(2);
 
+            short max_single_delta = SHRT_MIN;
+            int max_single_old = team.team[0];
+            int max_single_new = team.team[0];
+
             for (int i = 0; i < 11; i++) {
                 Player* p = season.player + team.team[i];
                 p->AddToSquadTotals(gk, df, md, fw, lp, 1);
                 old_players[0] = i;
+                int spbudget = team.bank + team.GetPlayerValue(w, old_players[0]);
+                for (int j = 0; j < season.pcount; j++) {
+                    Player* p2 = season.player + j;
+                    if (p2->skip)
+                        continue;
+                    if (p2->price > spbudget)
+                        continue;
+                    short delta2 = p2->effective_points - p->effective_points;
+                    if (p2->pos == p->pos && delta2 > max_single_delta) {
+                        max_single_old = i;
+                        max_single_new = j;
+                        max_single_delta = delta2;
+                    }
+                }
                 for (int j = 0; j < 11; j++) {
                     if (i == j)
                         continue;
@@ -135,9 +153,15 @@ int DoXptsSeasonLoop(Season& season, Team& team, Solver& solver) {
             else {
                 fout << endl;
                 int i = 0;
-                fout << "Expected gain = " << XP100(max_delta) << endl;
+                fout << "Max single transfer gain = " << endl;
+                fout << season.player[team.team[max_single_old]].name << " >< "
+                    << season.player[max_single_new].name
+                    << " = " << XP100(max_single_delta) << endl;
+                
+                fout << "\nExpected double transfer gain = " << XP100(max_delta) << endl;
                 fout << "Expected next weeks points = " << XP100(team.GetEffectivePoints())
                      << " + " << XP100(max_delta) << " = " << XP100(team.GetEffectivePoints() +max_delta) << endl;
+
                 for (int i = 0; i < MAX_PLAYERS_TO_TRANSFER; i++) {
                     fout << "\nTransfer out " << season.player[team.team[max_old[i]]].name << endl;
                     fout << "Transfer in " << season.player[max_new[i]].name << endl;
