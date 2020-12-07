@@ -81,9 +81,9 @@ short Team::GetTeamValue(int w) {
 
 short Team::GetPlayerValue(int w, int i) {
     int nowcost = season->player[team[i]].gwprice[w];
-    if (nowcost <= cost[i])
+    if (nowcost < cost[i])
         return nowcost;
-    return nowcost + (nowcost - cost[i]) / 2;
+    return cost[i] + (nowcost - cost[i]) / 2;
 }
 
 void Team::UpdatePlayer(int w, int i, int pi) {

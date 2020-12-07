@@ -68,7 +68,6 @@ int DoXptsSeasonLoop(Season& season, Team& team, Solver& solver) {
                 p->skip = true;
             }
 
-            // Adjust budget after selling transers
             const int MAX_PLAYERS_TO_TRANSFER = 2;
             vector<int> old_players(MAX_PLAYERS_TO_TRANSFER);
             vector<int> new_players(MAX_PLAYERS_TO_TRANSFER);
