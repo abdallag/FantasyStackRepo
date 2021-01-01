@@ -19,7 +19,7 @@ def download():
         "max_cost" : "130",
         "search_term" : "",
         "gw_start" : "1",
-        "gw_end" : "4",
+        "gw_end" : "10",
         "first" : "0",
         "last" : "700",
         "season" : "20" + str(cur_start)
