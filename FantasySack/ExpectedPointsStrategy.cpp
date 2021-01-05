@@ -6,8 +6,9 @@
 
 using namespace std;
 
-ABSL_FLAG(bool, wceval, 0, "Evalute playing a wildcard at each week");
+ABSL_FLAG(bool, wceval, 1, "Evalute playing a wildcard at each week");
 ABSL_FLAG(int, gw, -1, "Specify a gw to analyze");
+ABSL_FLAG(int, xptsweeks, 6, "Number of game weeks to estimate its expected points");
 
 #define XP100(P)  double(P)/100
 
@@ -18,6 +19,7 @@ int DoXptsSeasonLoop(Season& season, Team& team, Solver& solver) {
         startgw = gwflag;
         endgw = gwflag;
     }
+    int xptsweeks = absl::GetFlag(FLAGS_xptsweeks);
     wostream& fout = *season.pout;
     int points = 0;
     int prevw = 1;
@@ -40,7 +42,7 @@ int DoXptsSeasonLoop(Season& season, Team& team, Solver& solver) {
             Team wct(team);
             solver.Init();
             season.ResetPlayers(w);
-            season.ApplyXpts(w, 6);
+            season.ApplyXpts(w, xptsweeks);
             solver.Solve(wct, w);
             wct.print_sol(prevw, w, false, false);
 
@@ -48,7 +50,7 @@ int DoXptsSeasonLoop(Season& season, Team& team, Solver& solver) {
         }
         solver.Init();
         season.ResetPlayers(w);
-        season.ApplyXpts(w, 6);
+        season.ApplyXpts(w, xptsweeks);
 
         int bench = team.bcount;
         int minp = team.MinEffectivePlayer();

@@ -1,7 +1,7 @@
 #include "Season.h"
 #include "absl/flags/flag.h"
 
-ABSL_FLAG(std::string, exclude, "", "File containing players to exclude one per line.");
+ABSL_FLAG(std::string, exclude, "exclude.txt", "File containing players to exclude one per line.");
 
 
 bool Player::AddToSquadTotals(int& gk, int& df, int& md, int& fw, int& lp, int delta) {

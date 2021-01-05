@@ -66,6 +66,8 @@
     <Text Include="Hany.txt" />
     <Text Include="bishr.txt" />
     <Text Include="abdalla.txt" />
+    <Text Include="talaat.txt" />
+    <Text Include="talaatfh.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="2018-19_opta.txt" />

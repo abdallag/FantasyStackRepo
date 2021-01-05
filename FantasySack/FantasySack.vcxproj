@@ -184,6 +184,8 @@
     <Text Include="hamalawy.txt" />
     <Text Include="Hany.txt" />
     <Text Include="abdalla.txt" />
+    <Text Include="talaat.txt" />
+    <Text Include="talaatfh.txt" />
     <Text Include="tifa.txt" />
     <Text Include="yseed.txt" />
   </ItemGroup>
