@@ -8,7 +8,7 @@ class Solver
 {
 public:
 	static const int GK = 1;
-	static const int DF = 3;
+	static const int DF = 5;
 	static const int MD = 5;
 	static const int FW = 3;
 	static const int MAX_ATTACK = 7;
