@@ -48,7 +48,6 @@
     <Text Include="2016-17_gw.txt" />
     <Text Include="2016-17.txt" />
     <Text Include="2018-19_gw_opta.txt" />
-    <Text Include="2019-20_xpts.txt" />
     <Text Include="2019-20_gw_xpts.txt" />
     <Text Include="2019-20.txt" />
     <Text Include="2019-20_gw.txt" />
@@ -68,6 +67,7 @@
     <Text Include="abdalla.txt" />
     <Text Include="talaat.txt" />
     <Text Include="talaatfh.txt" />
+    <Text Include="2019-20_xpts.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="2018-19_opta.txt" />

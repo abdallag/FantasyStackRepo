@@ -17,6 +17,21 @@ public:
 	static const int BUDGET = 1000 - 165 - (DF - 3) * 5;
   
 protected:
+	// Dynamic Programming Memoization Cache:
+	// Dimension Description:
+	// 0# Players
+	// 1# Goal keepers  constraint
+	// 2# Defender constraint
+	// 3# Midfielders constraint
+	// 4# Forwards constraint
+	// 5# Number of players in team Season::LIVERPOOL. 
+	//    This covers the constraint that there should be no more than 3 players in LIVERPOOL team.
+	//    This is a relaxation of the actual FPL contstraint that there should be no more than 3 players in any team.
+	//    To cover the original constraint, we would need alot more more memory and alot more processing.
+	//    However, in practice, usually no more than 1 teams yield more than 3 players. If the algorithm produces
+	//	  duplicates in a team differen from LIVERPOOL (e.g Man City or Westham in a doulbe game week :D) , I just
+	//    rerun it after changing Season::LIVERPOOL. If more than 1 team  produce duplicates, I use execlustion
+	//    lists to work around it. I propably should do it programatically but I am too lazy at the momont.
 	short* cache[Season::COUNT + 1][GK + 1][DF + 1][MD + 1][FW + 1][LP + 1];
 	short* sol[Season::COUNT + 1][GK + 1][DF + 1][MD + 1][FW + 1][LP + 1];
 

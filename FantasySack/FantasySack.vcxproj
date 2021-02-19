@@ -170,10 +170,10 @@
     <Text Include="2018-19_gw_opta.txt" />
     <Text Include="2019-20_gw_opta.txt" />
     <Text Include="2019-20_opta.txt" />
-    <Text Include="2019-20_xpts.txt" />
     <Text Include="2019-20_gw_xpts.txt" />
     <Text Include="2019-20_gw.txt" />
     <Text Include="2019-20.txt" />
+    <Text Include="2019-20_xpts.txt" />
     <Text Include="2020-21_gw.txt" />
     <Text Include="2020-21_gw_opta.txt" />
     <Text Include="2020-21_xpts_sum.txt" />
